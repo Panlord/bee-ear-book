@@ -1,0 +1,70 @@
+ECS 162 Final Project Changelog ******Aaron Pan
+
+5/29/20
+start: ~9:01PM; finish: ~2:05AM; total time: ~5 hrs 4 mins
+
+>> UNDER .env (environment variables)
+-added CLIENT_ID and CLIENT_SECRET environment variables for google login authentication
+
+>> UNDER Splash.jsx
+-changed the ahref link of the login button to "/auth/google"
+--will redirect to "bee-ear-book.glitch.me/auth/google"
+
+>> UNDER server.js
+> Importing Modules
+-changed "var express = ..." and "var app = express()" in server.js from var to const
+-imported the following modules to server.js (and added them to package.json):
+--body-parser (for parsing the body when doing GET requests and whatnot)
+--passport (3rd party logins...)
+--passport-google-oauth20 (...specifically google logins)
+--request (for API requests)
+--cookie-parser (for cookies)
+--express-session (for handling sessions)
+> Passport Setup
+-setup passport right after importing the modules and before the pipeline start
+--the "passport.use(new GoogleStrategy..." thing
+> Server Pipeline Stuff
+-console logged the start of the server pipeline
+-added "app.use(bodyParser..." 							(takes HTTP message body and puts it as a string into request.body)
+-added "app.use(cookieParser()));" 						(puts cookies into request.cookies)
+-added "app.use("/", printIncomingRequest);" 					(for console log debugging)
+-added "app.use(expressSession..." 						(handling cookies, sessions, n shet)
+-added "app.use(passport.initialize());" 					(starts up passport)
+-added "app.use(passport.session());" 					*note: Peter you might be able to use this but idk
+-added some comments to the 2 existing pipeline functions to clarify what they do
+-added "app.get("/index.html/query*..." 					(handles query strings)
+-added "app.get('/user/*'..." 							(serves protected files from /user; only works if user is logged in)
+-added "app.get('/auth/google'..." 						(starts login process)
+-added "app.get('/auth/accepted..." 						(get user's google account info)
+-added "app.get('/setcookie..." 						(when login is successful, set cookies and redirect to student creator page)
+--currently set to redirect to user/student-creator.html
+-added "passport.serializeUser..." 						(part of server's session setup)
+-added "passport.deserializeUser..." 						(called on every HTTP request while user is logged in)
+> Functions
+-added printIncomingRequest 							(for console log debugging)
+-added gotProfile 
+--gets user's google profile info and email
+--if user email is UCD email, the user's userData, which is a dbRowID, is set to 1
+--if not, dbRowID set to 2
+---using dbRowID because that's what's done in the google login example
+---I'm sure we can use a different paramenter and we prob have to once we get the db up
+---but for now, whether a user logged in with UCD email or not is represented by dbRowID
+-added requireUser 								(checks if user used UCD email)
+-added requireLogin 								(checks if user logged in)
+
+>> NEW FILES
+-added a new folder "user" 
+--it should contain all the files that are restricted to only the people who login with their UCD email
+-added "student-creator.html" under the user folder
+--I intend it to be the page where the logged in student inputs his/her info to submit to the database
+--I forget if that's what information.html is meant to be but whatever we can clarify it later
+
+>> NOTES 
+-I have a function that can log a user off but haven't added it because idk if we gon have a logoff button?
+-I first tried everything on my remix of the Google Login Example, and it works on that project
+--You can try it here: https://dent-emerald-stetson.glitch.me/
+--Lemme know if you want direct access to my work on the project in case you wanna see how it works
+--But it's pretty much exactly what I imported onto our final proj file
+-In my Google Login Example remix, whenever someone logs on but not with their UCD email, a had a big alert box telling them to use their UCD email
+--idk what you guys want to happen if someone logs in without their UCD email so I did nothing about that for now (also idk how to alert box in react haha)
+-while I 'finished' logins, things are acting weird and idk why; bc of react, probably, but i will investigate further later
